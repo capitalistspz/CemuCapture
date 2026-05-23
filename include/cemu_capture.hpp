@@ -96,9 +96,7 @@ namespace cemu_capture
         // Throws std::invalid_argument if property does not exist
         virtual void SetProperty(StreamIntProperty property, int propertyValue) = 0;
         [[nodiscard]] virtual int GetProperty(StreamIntProperty property) = 0;
-
-        [[nodiscard]] virtual SourceInfo GetInfo() const = 0;
-        virtual ~Source() = default;
+    	virtual ~Source() = default;
     };
 
     class Context

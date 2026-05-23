@@ -25,7 +25,7 @@ namespace cemu_capture
         void AllocateAndQueueBuffers(size_t n, const v4l2_format& format);
 
     public:
-        V4L2Source(std::shared_ptr<V4L2Context>, FileDescriptor fd, SourceInfo info);
+        V4L2Source(std::shared_ptr<V4L2Context>, FileDescriptor fd);
         ~V4L2Source() override = default;
         void Capture(std::vector<uint8_t>& outputBuffer) override;
         std::optional<StreamFormat> StartStreaming(const StreamFormat& formatInfo) override;
@@ -34,7 +34,6 @@ namespace cemu_capture
         std::vector<StreamFormat> EnumerateStreamFormats() override;
         void SetProperty(StreamIntProperty property, int propertyValue) override;
         int GetProperty(StreamIntProperty property) override;
-        SourceInfo GetInfo() const override;
         bool CanConvert(ImageFormat from, ImageFormat to) const override;
         int GetFd();
         void UpdateData();

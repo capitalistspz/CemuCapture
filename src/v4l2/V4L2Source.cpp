@@ -214,9 +214,9 @@ namespace cemu_capture
             throw std::runtime_error("Failed to map any buffers for capture");
     }
 
-    V4L2Source::V4L2Source(std::shared_ptr<V4L2Context> context, FileDescriptor fd, SourceInfo deviceInfo) :
+    V4L2Source::V4L2Source(std::shared_ptr<V4L2Context> context, FileDescriptor fd) :
         m_ctx(std::move(context)),
-        m_fd(std::move(fd)), m_deviceInfo(std::move(deviceInfo))
+        m_fd(std::move(fd))
     {
     }
 
@@ -484,11 +484,6 @@ namespace cemu_capture
         {
             throw std::invalid_argument("Unsupported property");
         }
-    }
-
-    SourceInfo V4L2Source::GetInfo() const
-    {
-        return m_deviceInfo;
     }
 
     bool V4L2Source::CanConvert(ImageFormat from, ImageFormat to) const

@@ -13,6 +13,7 @@
 #include <wil/result_macros.h>
 #include "Conversion.hpp"
 #include "Common.hpp"
+#include "MFContext.hpp"
 
 namespace cemu_capture
 {
@@ -128,8 +129,8 @@ namespace cemu_capture
 		CRITICAL_SECTION m_critsec{};
 	};
 
-	MFSource::MFSource(std::shared_ptr<MFContext> ctx, wil::com_ptr<IMFMediaSource> source, SourceInfo sourceInfo)
-		: m_ctx(std::move(ctx)), m_source(std::move(source)), m_info(std::move(sourceInfo)), m_callbackObj(new ReaderCallback(*this))
+	MFSource::MFSource(std::shared_ptr<MFContext> ctx, wil::com_ptr<IMFMediaSource> source)
+		: m_ctx(std::move(ctx)), m_source(std::move(source)), m_callbackObj(new ReaderCallback(*this))
 	{
 	}
 
@@ -351,10 +352,4 @@ namespace cemu_capture
 			return static_cast<int>(m_outputStride);
 		throw std::invalid_argument("Unsupported property");
 	}
-
-	SourceInfo MFSource::GetInfo() const
-	{
-		return m_info;
-	}
-
 } // namespace cemu_capture

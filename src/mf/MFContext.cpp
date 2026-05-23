@@ -11,7 +11,7 @@
 #include <mfapi.h>
 #include <mfobjects.h>
 #include <mfidl.h>
-
+#include "Common.hpp"
 #include "MFSource.hpp"
 
 namespace cemu_capture
@@ -73,10 +73,6 @@ namespace cemu_capture
 		wil::com_ptr<IMFMediaSource> source;
 		THROW_IF_FAILED(MFCreateDeviceSource(attr.get(), source.put()));
 
-		// Even when using MFCreateDeviceSourceActivate, MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME isn't found,
-		// despite https://learn.microsoft.com/en-us/windows/win32/medfound/mf-devsource-attribute-friendly-name
-		// saying that attribute is set on objects returned by MFCreateDeviceSourceActivate
-
-		return std::make_shared<MFSource>(shared_from_this(), std::move(source), SourceInfo{id, "N/A"});
+		return std::make_shared<MFSource>(shared_from_this(), std::move(source));
 	}
 } // namespace cemu_capture

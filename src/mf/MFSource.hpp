@@ -8,11 +8,10 @@
 #include <mfidl.h>
 #include <mfreadwrite.h>
 #include <mutex>
-#include "Common.hpp"
-#include "MFContext.hpp"
 
 namespace cemu_capture
 {
+	class MFContext;
 	struct Stream
 	{
 		wil::com_ptr<IMFSourceReader> reader;
@@ -27,7 +26,7 @@ namespace cemu_capture
 	class MFSource : public SourceCommon, public std::enable_shared_from_this<MFSource>
 	{
 	  public:
-		MFSource(std::shared_ptr<MFContext> ctx, wil::com_ptr<IMFMediaSource> source, SourceInfo sourceInfo);
+		MFSource(std::shared_ptr<MFContext> ctx, wil::com_ptr<IMFMediaSource> source);
 		~MFSource() override = default;
 
 		std::optional<StreamFormat> StartStreaming(const StreamFormat&) override;
@@ -41,7 +40,6 @@ namespace cemu_capture
 
 		void SetProperty(StreamIntProperty, int value) override;
 		int GetProperty(StreamIntProperty) override;
-		SourceInfo GetInfo() const override;
 
 	  private:
 		friend class ReaderCallback;
@@ -58,7 +56,6 @@ namespace cemu_capture
 		std::mutex m_outputBufferMutex;
 		std::vector<std::uint8_t> m_outputBuffer;
 		unsigned m_outputStride{};
-		SourceInfo m_info;
 	};
 } // namespace cemu_capture
 #endif

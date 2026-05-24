@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.23)
-project(cemu_capture CXX)
+project(CemuCapture CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(CMakeDependentOption)
@@ -18,45 +18,45 @@ if (WIN32)
     find_package(Boost QUIET COMPONENTS nowide)
     if (NOT Boost_NOWIDE_FOUND)
         find_package(nowide REQUIRED)
-        set(cemu_capture_nowide_standalone TRUE)
+        set(CemuCapture_nowide_standalone TRUE)
     else()
-        set(cemu_capture_nowide_standlone FALSE)
+        set(CemuCapture_nowide_standlone FALSE)
     endif()
 endif()
 
 # VCPKG sets CMAKE_FIND_PACKAGE_PREFER_CONFIG, but doesn't provide libyv::libyuv as a target, so the find module adds that alias
 find_package(libyuv MODULE REQUIRED)
 
-add_library(cemu_capture src/ContextCommon.hpp src/SourceCommon.hpp src/util.hpp)
-add_library(cemu_capture::cemu_capture ALIAS cemu_capture)
+add_library(CemuCapture src/ContextCommon.hpp src/SourceCommon.hpp src/util.hpp)
+add_library(CemuCapture::CemuCapture ALIAS CemuCapture)
 
-target_compile_features(cemu_capture PUBLIC cxx_std_20)
+target_compile_features(CemuCapture PUBLIC cxx_std_20)
 
-target_sources(cemu_capture
+target_sources(CemuCapture
         PUBLIC
         FILE_SET HEADERS
         BASE_DIRS include
-        FILES include/cemu_capture.hpp
+        FILES include/CemuCapture.hpp
 )
 
-set_target_properties(cemu_capture PROPERTIES VERIFY_INTERFACE_HEADER_SETS TRUE)
+set_target_properties(CemuCapture PROPERTIES VERIFY_INTERFACE_HEADER_SETS TRUE)
 
 if (UNIX AND NOT APPLE)
-    target_sources(cemu_capture PRIVATE
-            src/v4l2/ConversionTable.hpp
-            src/v4l2/FileDescriptor.hpp
-            src/v4l2/Fract.hpp
-            src/v4l2/V4L2Ioctls.hpp
-            src/v4l2/MemoryMapped.hpp
-            src/v4l2/V4L2Context.cpp
-            src/v4l2/V4L2Context.hpp
-            src/v4l2/V4L2Source.cpp
-            src/v4l2/V4L2Source.hpp
+    target_sources(CemuCapture PRIVATE
+        src/v4l2/ConversionTable.hpp
+        src/v4l2/FileDescriptor.hpp
+        src/v4l2/Fract.hpp
+        src/v4l2/V4L2Ioctls.hpp
+        src/v4l2/MemoryMapped.hpp
+        src/v4l2/V4L2Context.cpp
+        src/v4l2/V4L2Context.hpp
+        src/v4l2/V4L2Source.cpp
+        src/v4l2/V4L2Source.hpp
     )
-    message(STATUS "cemu_capture: V4L2 backend")
+    message(STATUS "CemuCapture: V4L2 backend")
 elseif (WIN32)
-    target_sources(cemu_capture PRIVATE 
-        src/mf/MFContext.cpp 
+    target_sources(CemuCapture PRIVATE
+        src/mf/MFContext.cpp
         src/mf/MFContext.hpp
         src/mf/MFSource.cpp
         src/mf/MFSource.hpp
@@ -64,25 +64,25 @@ elseif (WIN32)
         src/mf/Conversion.cpp
         src/mf/Common.hpp
     )
-    target_compile_definitions(cemu_capture PRIVATE UNICODE _UNICODE)
-    target_link_libraries(cemu_capture PRIVATE WIL::WIL mf mfplat mfreadwrite mfuuid shlwapi)
-    if (cemu_capture_nowide_standalone)
-        target_link_libraries(cemu_capture PRIVATE nowide::nowide)
-        target_compile_definitions(cemu_capture PRIVATE CEMU_CAPTURE_NOWIDE_STANDLONE)
-        message(STATUS "cemu_capture: Using standalone nowide")
+    target_compile_definitions(CemuCapture PRIVATE UNICODE _UNICODE)
+    target_link_libraries(CemuCapture PRIVATE WIL::WIL mf mfplat mfreadwrite mfuuid shlwapi)
+    if (CemuCapture_nowide_standalone)
+        target_link_libraries(CemuCapture PRIVATE nowide::nowide)
+        target_compile_definitions(CemuCapture PRIVATE CEMU_CAPTURE_NOWIDE_STANDLONE)
+        message(STATUS "CemuCapture: Using standalone nowide")
     else()
-        target_link_libraries(cemu_capture PRIVATE Boost::nowide)
+        target_link_libraries(CemuCapture PRIVATE Boost::nowide)
     endif()
-    message(STATUS "cemu_capture: MediaFoundation backend")
+    message(STATUS "CemuCapture: MediaFoundation backend")
 else()
     message(SEND_ERROR "Unsupported platform")
 endif ()
 
-target_link_libraries(cemu_capture PRIVATE libyuv::libyuv)
+target_link_libraries(CemuCapture PRIVATE libyuv::libyuv)
 
 if (CEMU_CAPTURE_USE_LIBSYSTEMD)
-    target_link_libraries(cemu_capture PRIVATE libsystemd::libsystemd)
-    target_compile_definitions(cemu_capture PRIVATE CEMU_CAPTURE_USE_LIBSYSTEMD)
+    target_link_libraries(CemuCapture PRIVATE libsystemd::libsystemd)
+    target_compile_definitions(CemuCapture PRIVATE CEMU_CAPTURE_USE_LIBSYSTEMD)
 endif ()
 
 if (CEMU_CAPTURE_BUILD_EXAMPLES)
@@ -91,12 +91,12 @@ endif ()
 
 include(GNUInstallDirs)
 
-install(TARGETS cemu_capture
-        EXPORT cemu_capture-targets
+install(TARGETS CemuCapture
+        EXPORT CemuCapture-targets
         FILE_SET HEADERS
 )
 
-install(EXPORT cemu_capture-targets
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/cemu_capture
-        NAMESPACE cemu_capture::
+install(EXPORT CemuCapture-targets
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CemuCapture
+        NAMESPACE CemuCapture::
 )

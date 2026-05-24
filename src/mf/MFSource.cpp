@@ -15,7 +15,7 @@
 #include "Common.hpp"
 #include "MFContext.hpp"
 
-namespace cemu_capture
+namespace CemuCapture
 {
 	inline ImageFormat FromMFSubType(const GUID& guid)
 	{
@@ -352,4 +352,4 @@ namespace cemu_capture
 			return static_cast<int>(m_outputStride);
 		throw std::invalid_argument("Unsupported property");
 	}
-} // namespace cemu_capture
+} // namespace CemuCapture

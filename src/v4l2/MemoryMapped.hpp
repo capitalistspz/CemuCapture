@@ -1,9 +1,9 @@
-#ifndef CEMU_CAPTURE_MEMORY_MAPPED_HPP
-#define CEMU_CAPTURE_MEMORY_MAPPED_HPP
+#ifndef CEMU_CAPTURE_V4L2_MEMORY_MAPPED_HPP
+#define CEMU_CAPTURE_V4L2_MEMORY_MAPPED_HPP
 #include <span>
 #include <sys/mman.h>
 
-namespace cemu_capture
+namespace CemuCapture
 {
     template <typename T>
     class MemoryMapped

@@ -1,5 +1,5 @@
-#ifndef CEMU_CAPTURE_CAPTURE_HPP
-#define CEMU_CAPTURE_CAPTURE_HPP
+#ifndef CEMU_CAPTURE_CEMU_CAPTURE_HPP
+#define CEMU_CAPTURE_CEMU_CAPTURE_HPP
 
 #include <cstdint>
 #include <string>
@@ -9,7 +9,7 @@
 #include <optional>
 #include <span>
 
-namespace cemu_capture
+namespace CemuCapture
 {
     enum class ImageFormat
     {

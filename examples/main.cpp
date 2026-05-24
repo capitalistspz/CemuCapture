@@ -2,16 +2,16 @@
 #include <chrono>
 #include <fstream>
 #include <libyuv.h>
-#include <cemu_capture.hpp>
+#include <CemuCapture.hpp>
 #include <print>
 #include <thread>
 
-void LogCallback(cemu_capture::LogLevel, std::string_view);
-std::string_view FormatToString(cemu_capture::ImageFormat);
+void LogCallback(CemuCapture::LogLevel, std::string_view);
+std::string_view FormatToString(CemuCapture::ImageFormat);
 
 int main()
 {
-    auto context = cemu_capture::Context::Create();
+    auto context = CemuCapture::Context::Create();
     context->SetLogCallback(LogCallback);
 
     const auto sourceInfos = context->EnumerateSources();
@@ -31,18 +31,18 @@ int main()
     {
         std::println("{} {}x{}@{} fps", FormatToString(format), dimensions.width, dimensions.height, framerate);
     }
-    source->SetOutputFormat(cemu_capture::ImageFormat::NV12);
-    source->SetCaptureErrorPolicy(cemu_capture::CaptureErrorPolicy::PushBadFrame);
+    source->SetOutputFormat(CemuCapture::ImageFormat::NV12);
+    source->SetCaptureErrorPolicy(CemuCapture::CaptureErrorPolicy::PushBadFrame);
 
     const auto actualFormat = source->StartStreaming({
-        .dimensions = {640, 480}, .framerate = 30, .format = cemu_capture::ImageFormat::YUYV
+        .dimensions = {640, 480}, .framerate = 30, .format = CemuCapture::ImageFormat::YUYV
     });
     if (!actualFormat)
         return 1;
     auto rgbBuffer = std::vector<uint8_t>(actualFormat->dimensions.width * actualFormat->dimensions.height * 3);
 
     source->SetCaptureCallback(
-        [&](cemu_capture::Source&, cemu_capture::CaptureErrorType type, std::span<const std::uint8_t> bytes)
+        [&](CemuCapture::Source&, CemuCapture::CaptureErrorType type, std::span<const std::uint8_t> bytes)
         {
             static auto counter = 0u;
             static auto lastTime = std::chrono::high_resolution_clock::now();
@@ -50,7 +50,7 @@ int main()
             const auto planeSize = dims.width * dims.height;
 
             const auto fileName = std::format("output_{}x{}_{}{}.bgr", dims.width, dims.height, counter++,
-                                        type == cemu_capture::CaptureErrorType::None ? "" : "_bad");
+                                        type == CemuCapture::CaptureErrorType::None ? "" : "_bad");
             if (auto file = std::ofstream(fileName))
             {
                 // Convert to BGR888
@@ -69,17 +69,17 @@ int main()
     std::this_thread::sleep_for(std::chrono::seconds(30));
 }
 
-void LogCallback(cemu_capture::LogLevel level, std::string_view sv)
+void LogCallback(CemuCapture::LogLevel level, std::string_view sv)
 {
     switch (level)
     {
-    case cemu_capture::LogLevel::Info:
+    case CemuCapture::LogLevel::Info:
         std::print("[Info] ");
         break;
-    case cemu_capture::LogLevel::Warning:
+    case CemuCapture::LogLevel::Warning:
         std::print("[Warn] ");
         break;
-    case cemu_capture::LogLevel::Error:
+    case CemuCapture::LogLevel::Error:
         std::print("[Err ] ");
         break;
     default:
@@ -88,25 +88,25 @@ void LogCallback(cemu_capture::LogLevel level, std::string_view sv)
     std::println("{}", sv);
 }
 
-std::string_view FormatToString(cemu_capture::ImageFormat format)
+std::string_view FormatToString(CemuCapture::ImageFormat format)
 {
     switch (format)
     {
-    case cemu_capture::ImageFormat::Unspecified:
+    case CemuCapture::ImageFormat::Unspecified:
         return "None";
-    case cemu_capture::ImageFormat::NV12:
+    case CemuCapture::ImageFormat::NV12:
         return "NV12";
-    case cemu_capture::ImageFormat::NV21:
+    case CemuCapture::ImageFormat::NV21:
         return "NV21";
-    case cemu_capture::ImageFormat::YUYV:
+    case CemuCapture::ImageFormat::YUYV:
         return "YUYV";
-    case cemu_capture::ImageFormat::UYVY:
+    case CemuCapture::ImageFormat::UYVY:
         return "UYVY";
-    case cemu_capture::ImageFormat::MJPG:
+    case CemuCapture::ImageFormat::MJPG:
         return "MJPEG";
-    case cemu_capture::ImageFormat::RGB24:
+    case CemuCapture::ImageFormat::RGB24:
         return "RGB24";
-    case cemu_capture::ImageFormat::ARGB32:
+    case CemuCapture::ImageFormat::ARGB32:
         return "ARGB32";
     default:
         throw std::invalid_argument("Invalid format");

@@ -1,5 +1,5 @@
-#ifndef CEMU_CAPTURE_MF_PRECOMPILED
-#define CEMU_CAPTURE_MF_PRECOMPILED
+#ifndef CEMU_CAPTURE_MF_COMMON_HPP
+#define CEMU_CAPTURE_MF_COMMON_HPP
 #ifndef CEMU_CAPTURE_NOWIDE_STANDLONE
 #include <boost/nowide/convert.hpp>
 namespace nowide = boost::nowide;
@@ -14,7 +14,7 @@ namespace nowide = boost::nowide;
 #define DEBUG_BREAK
 #endif
 
-namespace cemu_capture
+namespace CemuCapture
 {
 
 	inline void assert_hres_eval(HRESULT hres)
@@ -26,5 +26,5 @@ namespace cemu_capture
 		}
 #endif
 	}
-} // namespace cemu_capture
+} // namespace CemuCapture
 #endif

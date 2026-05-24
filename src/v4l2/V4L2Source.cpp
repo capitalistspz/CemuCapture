@@ -15,7 +15,7 @@
 #include "ConversionTable.hpp"
 #include "V4L2Ioctls.hpp"
 
-namespace cemu_capture
+namespace CemuCapture
 {
     constexpr static uint32_t ToV4L2Format(ImageFormat format)
     {
@@ -97,7 +97,7 @@ namespace cemu_capture
         };
     }
 
-    constexpr static v4l2_buf_type GetBufType(cemu_capture::ImageFormat format)
+    constexpr static v4l2_buf_type GetBufType(CemuCapture::ImageFormat format)
     {
         return format == ImageFormat::NV12 ? V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE : V4L2_BUF_TYPE_VIDEO_CAPTURE;
     }

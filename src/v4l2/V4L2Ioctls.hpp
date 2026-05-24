@@ -16,7 +16,7 @@
 #define V4L2_ARG_R
 #define V4L2_ARG_RW
 #define V4L2_ARG_W
-namespace cemu_capture::vidioc
+namespace CemuCapture::vidioc
 {
 V4L2_R inline int querycap (FileDescriptor& fd, V4L2_ARG_R v4l2_capability* var) { return fd.XIoctl(VIDIOC_QUERYCAP, var); }
 V4L2_RW inline int enum_fmt (FileDescriptor& fd, V4L2_ARG_RW v4l2_fmtdesc* var) { return fd.XIoctl(VIDIOC_ENUM_FMT, var); }

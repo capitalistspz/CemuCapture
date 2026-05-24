@@ -3,13 +3,13 @@
 #include <condition_variable>
 #include <thread>
 
-#include "cemu_capture.hpp"
+#include "CemuCapture.hpp"
 #include "../ContextCommon.hpp"
 #include "FileDescriptor.hpp"
 
 struct epoll_event;
 
-namespace cemu_capture
+namespace CemuCapture
 {
     class V4L2Source;
 

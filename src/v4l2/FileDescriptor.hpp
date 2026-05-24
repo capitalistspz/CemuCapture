@@ -1,11 +1,11 @@
-#ifndef CEMU_CAPTURE_FILE_DESCRIPTOR_HPP
-#define CEMU_CAPTURE_FILE_DESCRIPTOR_HPP
+#ifndef CEMU_CAPTURE_V4L2_FILE_DESCRIPTOR_HPP
+#define CEMU_CAPTURE_V4L2_FILE_DESCRIPTOR_HPP
 #include <cerrno>
 #include <utility>
 #include <unistd.h>
 #include <sys/ioctl.h>
 
-namespace cemu_capture
+namespace CemuCapture
 {
     class FileDescriptor
     {

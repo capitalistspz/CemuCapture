@@ -1,11 +1,13 @@
-#include <cassert>
+#ifndef CEMU_CAPTURE_MF_CONVERSION_HPP
+#define CEMU_CAPTURE_MF_CONVERSION_HPP
 #include <mfobjects.h>
 #include <vector>
 
-#include "cemu_capture.hpp"
+#include "CemuCapture.hpp"
 
-namespace cemu_capture::conversion
+namespace CemuCapture::conversion
 {
 	bool CanConvert(ImageFormat in, ImageFormat out);
 	void Convert(IMFMediaBuffer& buffer, ImageFormat inputFormat, ImageFormat outputFormat, unsigned outputStride, const Dimensions& dims, std::vector<uint8_t>& output);
-} // namespace cemu_capture::conversion
+} // namespace CemuCapture::conversion
+#endif

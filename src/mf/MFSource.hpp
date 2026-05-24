@@ -1,7 +1,7 @@
 #ifndef CEMU_CAPTURE_MF_SOURCE_HPP
 #define CEMU_CAPTURE_MF_SOURCE_HPP
 
-#include "cemu_capture.hpp"
+#include "CemuCapture.hpp"
 #include "../SourceCommon.hpp"
 #include <memory>
 #include <wil/com.h>
@@ -9,7 +9,7 @@
 #include <mfreadwrite.h>
 #include <mutex>
 
-namespace cemu_capture
+namespace CemuCapture
 {
 	class MFContext;
 	struct Stream
@@ -57,5 +57,5 @@ namespace cemu_capture
 		std::vector<std::uint8_t> m_outputBuffer;
 		unsigned m_outputStride{};
 	};
-} // namespace cemu_capture
+} // namespace CemuCapture
 #endif

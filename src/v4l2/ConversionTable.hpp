@@ -5,7 +5,7 @@
 #include <libyuv.h>
 #include <linux/videodev2.h>
 
-namespace cemu_capture::conversion
+namespace CemuCapture::conversion
 {
     using UniplanarInputConverter = void(*)(const v4l2_pix_format& inputFormat, unsigned outputStride,
                                             std::span<const uint8_t> input, std::span<uint8_t> output);

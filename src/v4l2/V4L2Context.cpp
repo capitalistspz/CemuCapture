@@ -21,7 +21,7 @@
 #include <systemd/sd-device.h>
 #endif
 
-namespace cemu_capture
+namespace CemuCapture
 {
     struct EpollData
     {
@@ -50,7 +50,7 @@ namespace cemu_capture
         }
         m_thread = std::jthread(&V4L2Context::ThreadFunc, this);
         if constexpr(std::same_as<std::jthread::native_handle_type, pthread_t>)
-            pthread_setname_np(m_thread.native_handle(), "cemu_capture");
+            pthread_setname_np(m_thread.native_handle(), "CemuCapture");
     }
 
     V4L2Context::~V4L2Context()

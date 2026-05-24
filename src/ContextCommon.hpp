@@ -1,13 +1,13 @@
 #ifndef CEMU_CAPTURE_CONTEXT_COMMON_HPP
 #define CEMU_CAPTURE_CONTEXT_COMMON_HPP
-#include "cemu_capture.hpp"
+#include "CemuCapture.hpp"
 
 #include <format>
 #include <functional>
 #include <string_view>
 #include <utility>
 
-namespace cemu_capture
+namespace CemuCapture
 {
     class ContextCommon : public Context
     {

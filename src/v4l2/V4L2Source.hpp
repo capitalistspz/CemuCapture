@@ -6,12 +6,12 @@
 #include <vector>
 #include <linux/videodev2.h>
 
-#include "cemu_capture.hpp"
+#include "CemuCapture.hpp"
 #include "../SourceCommon.hpp"
 #include "FileDescriptor.hpp"
 #include "MemoryMapped.hpp"
 
-namespace cemu_capture
+namespace CemuCapture
 {
     class V4L2Context;
 

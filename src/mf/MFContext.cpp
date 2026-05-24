@@ -14,7 +14,7 @@
 #include "Common.hpp"
 #include "MFSource.hpp"
 
-namespace cemu_capture
+namespace CemuCapture
 {
 	std::shared_ptr<Context> Context::Create()
 	{
@@ -75,4 +75,4 @@ namespace cemu_capture
 
 		return std::make_shared<MFSource>(shared_from_this(), std::move(source));
 	}
-} // namespace cemu_capture
+} // namespace CemuCapture

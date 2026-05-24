@@ -1,6 +1,6 @@
 #include "Conversion.hpp"
 #include "../util.hpp"
-#include "cemu_capture.hpp"
+#include "CemuCapture.hpp"
 #include <array>
 #include <cassert>
 #include <mfobjects.h>
@@ -9,7 +9,7 @@
 #include <cstring>
 #include "Common.hpp"
 
-namespace cemu_capture::conversion
+namespace CemuCapture::conversion
 {
 	static void LinewiseCopy(const uint8_t* dataIn, unsigned strideIn, uint8_t* dataOut, unsigned strideOut, const Dimensions& dims)
 	{
@@ -162,4 +162,4 @@ namespace cemu_capture::conversion
 			assert(false && "Format not handled");
 		}
 	}
-} // namespace cemu_capture::conversion
+} // namespace CemuCapture::conversion

@@ -1,8 +1,8 @@
 #ifndef CEMU_CAPTURE_SOURCE_COMMON_HPP
 #define CEMU_CAPTURE_SOURCE_COMMON_HPP
-#include "cemu_capture.hpp"
+#include "CemuCapture.hpp"
 
-namespace cemu_capture
+namespace CemuCapture
 {
     class SourceCommon : public Source
     {

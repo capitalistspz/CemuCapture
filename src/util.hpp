@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <utility>
 #include <optional>
-#include "cemu_capture.hpp"
+#include "CemuCapture.hpp"
 
 #if defined(__GNUC__)
 #define UNREACHABLE __builtin_unreachable()
@@ -12,7 +12,7 @@
 #define UNREACHABLE __assume(0)
 #endif
 
-namespace cemu_capture
+namespace CemuCapture
 {
     template <typename T, auto Deleter>
     using unique_ptr_cd = std::unique_ptr<T, decltype([](T* p) { Deleter(p); })>;

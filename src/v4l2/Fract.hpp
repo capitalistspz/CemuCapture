@@ -3,7 +3,7 @@
 #include <linux/videodev2.h>
 #include <cstdint>
 
-namespace cemu_capture
+namespace CemuCapture
 {
     template <typename I>
     constexpr I gcd(I a, I b)

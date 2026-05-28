@@ -25,6 +25,7 @@ namespace CemuCapture
         }
 
         CaptureErrorPolicy GetFrameErrorPolicy()
+        [[nodiscard]] CaptureErrorPolicy GetFrameErrorPolicy() const noexcept
         {
             return m_frameErrorPolicy;
         }

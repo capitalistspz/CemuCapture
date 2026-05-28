@@ -31,7 +31,7 @@ int main()
     {
         std::println("{} {}x{}@{} fps", FormatToString(format), dimensions.width, dimensions.height, framerate);
     }
-    source->SetOutputFormat(CemuCapture::ImageFormat::NV12);
+    source->SetOutputFormat(CemuCapture::ImageFormat::NV12, 0);
     source->SetCaptureErrorPolicy(CemuCapture::CaptureErrorPolicy::PushBadFrame);
 
     const auto actualFormat = source->StartStreaming({

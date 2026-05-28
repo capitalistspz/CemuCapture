@@ -31,8 +31,7 @@ namespace CemuCapture
         Saturation,
         Contrast,
         Gamma,
-        Sharpness,
-        OutputStride
+        Sharpness
     };
 
     enum class CaptureErrorPolicy
@@ -90,7 +89,10 @@ namespace CemuCapture
         virtual void SetCaptureCallback(std::function<void(Source&, CaptureErrorType, std::span<const uint8_t> bytes)>) = 0;
 
         [[nodiscard]] virtual bool CanConvert(ImageFormat from, ImageFormat to) const = 0;
-        virtual void SetOutputFormat(ImageFormat outputFormat) = 0;
+        // If imageFormat is a compressed format, stride is ignored.
+        // If imageFormat is Unspecified, capture output will be in the source format.
+        // If stride is 0 means capture stride will equal width.
+        virtual void SetOutputFormat(ImageFormat imageFormat, unsigned stride) = 0;
         virtual void SetCaptureErrorPolicy(CaptureErrorPolicy) = 0;
 
         // Throws std::invalid_argument if property does not exist

@@ -183,7 +183,7 @@ namespace CemuCapture
             throw std::runtime_error("Could not query device capabilities or does not support streaming");
         }
 
-        return std::make_shared<V4L2Source>(shared_from_this(), std::move(fd), *info);
+        return std::make_shared<V4L2Source>(shared_from_this(), std::move(fd));
     }
 
     void V4L2Context::ThreadFunc(std::stop_token stopToken)
@@ -249,7 +249,6 @@ namespace CemuCapture
                                                    &ev);
                         if (err == -1)
                             assert_perror(errno);
-                        Log(LogLevel::Error, "Device {} closed", device->GetInfo().id);
                         delete data;
                     }
                     return true;

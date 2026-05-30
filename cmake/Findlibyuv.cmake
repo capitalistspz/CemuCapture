@@ -43,6 +43,7 @@ if (NOT libyuv_FOUND)
 
 endif ()
 
+include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(libyuv
         REQUIRED_VARS
         libyuv_FOUND

@@ -10,6 +10,7 @@ if (NOT libsystemd_FOUND)
     endif ()
 endif ()
 
+include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(libsystemd
         REQUIRED_VARS
         libsystemd_FOUND

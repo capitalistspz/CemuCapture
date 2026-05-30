@@ -46,7 +46,8 @@ namespace CemuCapture
 		for (auto const& p : sources)
 		{
 			wil::unique_cotaskmem_string symlink;
-			auto res = p->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, symlink.put(), nullptr);
+			UINT32 symlinkLength = 0;
+			auto res = p->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, symlink.put(), &symlinkLength);
 			if (FAILED(res))
 			{
 				failedToGetSymlink = true;
@@ -54,9 +55,10 @@ namespace CemuCapture
 			}
 
 			wil::unique_cotaskmem_string name;
-			p->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME, name.put(), nullptr);
+			UINT32 nameLength = 0;
+			p->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME, name.put(), &nameLength);
 
-			infos.emplace_back(nowide::narrow(symlink.get()), nowide::narrow(name.get()));
+			infos.emplace_back(narrow(std::wstring_view(symlink.get(), symlinkLength)), narrow(std::wstring_view(name.get(), nameLength)));
 		}
 		if (failedToGetSymlink)
 			Log(LogLevel::Warning, "Failed to get symlink for some devices, they will be excluded from enumeration");
@@ -68,7 +70,7 @@ namespace CemuCapture
 		wil::com_ptr<IMFAttributes> attr;
 		THROW_IF_FAILED(MFCreateAttributes(attr.put(), 1));
 		THROW_IF_FAILED(attr->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID));
-		const auto symlink = nowide::widen(id);
+		const auto symlink = widen(id);
 		THROW_IF_FAILED(attr->SetString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, symlink.c_str()));
 		wil::com_ptr<IMFMediaSource> source;
 		THROW_IF_FAILED(MFCreateDeviceSource(attr.get(), source.put()));

@@ -30,7 +30,6 @@ namespace CemuCapture
         void Capture(std::vector<uint8_t>& outputBuffer) override;
         std::optional<StreamFormat> StartStreaming(const StreamFormat& formatInfo) override;
         void StopStreaming() override;
-        void SetOutputFormat(ImageFormat outputFormat) override;
         std::vector<StreamFormat> EnumerateStreamFormats() override;
         void SetProperty(StreamIntProperty property, int propertyValue) override;
         int GetProperty(StreamIntProperty property) override;
@@ -45,10 +44,7 @@ namespace CemuCapture
         std::vector<uint8_t> m_outputBuffer;
         std::shared_ptr<V4L2Context> m_ctx;
         FileDescriptor m_fd;
-        unsigned m_outputStride = 0;
-        uint32_t m_outputFormat = 0;
         SourceInfo m_deviceInfo;
-        bool m_logIfCannotConvert = false;
         uint32_t m_frameSequenceIndex;
     };
 }

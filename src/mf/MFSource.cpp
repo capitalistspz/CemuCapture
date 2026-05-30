@@ -14,6 +14,7 @@
 #include "Conversion.hpp"
 #include "Common.hpp"
 #include "MFContext.hpp"
+#include "../util.hpp"
 
 namespace CemuCapture
 {
@@ -279,11 +280,6 @@ namespace CemuCapture
 		return std::vector(entryView.begin(), entryView.end());
 	}
 
-	void MFSource::SetOutputFormat(ImageFormat format)
-	{
-		m_outputImageFormat = format;
-	}
-
 	bool MFSource::CanConvert(ImageFormat in, ImageFormat out) const
 	{
 		return conversion::CanConvert(in, out);
@@ -301,8 +297,8 @@ namespace CemuCapture
 			return;
 		const auto format = m_stream->format;
 		std::scoped_lock lock(m_outputBufferMutex);
-		const auto outputStride = m_outputStride ? m_outputStride : format.dimensions.width;
-		const auto outputImageFormat = m_outputImageFormat != ImageFormat::Unspecified ? m_outputImageFormat : format.format;
+		const auto outputStride = x_neq_otherwise(0, GetOutputStride(), format.dimensions.width);
+		const auto outputImageFormat = x_neq_otherwise(ImageFormat::Unspecified,GetOutputImageFormat(), format.format);
 		UINT32 frameCorrupted;
 		// If it failed, then who knows?
 		if (FAILED(sample.GetUINT32(MFSampleExtension_FrameCorruption, &frameCorrupted)))
@@ -335,21 +331,11 @@ namespace CemuCapture
 
 	void MFSource::SetProperty(StreamIntProperty prop, int value)
 	{
-		if (prop == StreamIntProperty::OutputStride)
-		{
-			if (value < 0)
-				throw std::out_of_range("Stride cannot be negative");
-			m_outputStride = value;
-		}
-		else
-		{
-			throw std::invalid_argument("Unsupported property");
-		}
+		throw std::invalid_argument("Unsupported property");
 	}
+
 	int MFSource::GetProperty(StreamIntProperty prop)
 	{
-		if (prop == StreamIntProperty::OutputStride)
-			return static_cast<int>(m_outputStride);
 		throw std::invalid_argument("Unsupported property");
 	}
 } // namespace CemuCapture

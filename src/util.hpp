@@ -78,6 +78,14 @@ namespace CemuCapture
             return std::nullopt;
         }
     }
+
+    template <typename T>
+    constexpr T x_neq_otherwise(auto matchVal, T x, T otherwise)
+    {
+        if (x != matchVal)
+            return x;
+        return otherwise;
+    }
 #endif
 }
 #endif

@@ -370,8 +370,8 @@ namespace CemuCapture
             height = pix.height;
             inputFormat = pix.pixelformat;
         }
-        const auto outputStride = (m_outputStride != 0) ? m_outputStride : width;
-        const auto outputFormat = (m_outputFormat == 0) ? inputFormat : m_outputFormat;
+        const auto outputStride = x_neq_otherwise(0, GetOutputStride(), width);
+        const auto outputFormat = x_neq_otherwise(0, ToV4L2Format(GetOutputImageFormat()), inputFormat);
 
         if (captureErrorType != CaptureErrorType::None && errorPolicy == CaptureErrorPolicy::IgnoreFrame)
         {
@@ -396,11 +396,6 @@ namespace CemuCapture
             else
             {
                 m_outputBuffer.assign(currentMappedBuffer.cbegin(), currentMappedBuffer.cend());
-                if (m_logIfCannotConvert && inputFormat != m_outputFormat)
-                {
-                    m_ctx->Log(LogLevel::Info, "Conversion failed");
-                    m_logIfCannotConvert = false;
-                }
             }
             InvokeCaptureCallback(captureErrorType, m_outputBuffer);
         }
@@ -448,12 +443,6 @@ namespace CemuCapture
                 throw std::runtime_error(std::strerror(errno));
             }
         }
-        else if (property == StreamIntProperty::OutputStride)
-        {
-            if (propertyValue < 0)
-                throw std::invalid_argument("Stride cannot be negative");
-            m_outputStride = static_cast<unsigned>(propertyValue);
-        }
         else
         {
             throw std::invalid_argument("Unsupported property");
@@ -476,10 +465,6 @@ namespace CemuCapture
             }
             return ctrl.value;
         }
-        else if (property == StreamIntProperty::OutputStride)
-        {
-            return static_cast<int>(m_outputStride);
-        }
         else
         {
             throw std::invalid_argument("Unsupported property");
@@ -498,16 +483,6 @@ namespace CemuCapture
         if (std::ranges::any_of(conversion::MULTIPLANAR_TABLE, predicate))
             return true;
         return false;
-    }
-
-    void V4L2Source::SetOutputFormat(ImageFormat outputFormat)
-    {
-        const auto newFormat = ToV4L2Format(outputFormat);
-        if (newFormat == 0 && outputFormat != ImageFormat::Unspecified)
-            throw std::invalid_argument("Unknown output format");
-        std::scoped_lock lock(m_mutex);
-        m_outputFormat = newFormat;
-        m_logIfCannotConvert = true;
     }
 
     std::vector<StreamFormat> V4L2Source::EnumerateStreamFormats()

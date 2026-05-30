@@ -33,7 +33,6 @@ namespace CemuCapture
 		void StopStreaming() override;
 
 		std::vector<StreamFormat> EnumerateStreamFormats() override;
-		void SetOutputFormat(ImageFormat) override;
 		bool CanConvert(ImageFormat, ImageFormat) const override;
 
 		void Capture(std::vector<uint8_t>& output) override;
@@ -52,10 +51,8 @@ namespace CemuCapture
 		wil::com_ptr<IMFSourceReaderCallback> m_callbackObj;
 		std::vector<StreamFormatEntry> m_enumeratedStreamFormats;
 		std::optional<Stream> m_stream;
-		ImageFormat m_outputImageFormat{};
 		std::mutex m_outputBufferMutex;
 		std::vector<std::uint8_t> m_outputBuffer;
-		unsigned m_outputStride{};
 	};
 } // namespace CemuCapture
 #endif

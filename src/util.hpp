@@ -52,7 +52,7 @@ namespace CemuCapture
 
         return out_ptr_t(p);
     }
-
+#endif
     // Because references to packed vars are evil
     constexpr auto no_bind(auto v)
     {
@@ -86,6 +86,5 @@ namespace CemuCapture
             return x;
         return otherwise;
     }
-#endif
 }
 #endif

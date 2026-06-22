@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.25..4.3.4)
 project(CemuCapture CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -33,7 +33,7 @@ target_sources(CemuCapture
 
 set_target_properties(CemuCapture PROPERTIES VERIFY_INTERFACE_HEADER_SETS TRUE)
 
-if (UNIX AND NOT APPLE)
+if (LINUX)
     target_sources(CemuCapture PRIVATE
         src/v4l2/ConversionTable.hpp
         src/v4l2/FileDescriptor.hpp

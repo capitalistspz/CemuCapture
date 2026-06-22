@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.25..4.3.4)
-project(CemuCapture CXX)
+project(CemuCapture LANGUAGES CXX VERSION 0.1.0)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(cemu_capture_module_path "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${cemu_capture_module_path}")
 include(CMakeDependentOption)
 
 cmake_dependent_option(CEMU_CAPTURE_USE_LIBSYSTEMD "Use systemd for device enumeration" ON "UNIX AND NOT APPLE" OFF)
@@ -70,6 +71,10 @@ if (CEMU_CAPTURE_USE_LIBSYSTEMD)
     target_compile_definitions(CemuCapture PRIVATE CEMU_CAPTURE_USE_LIBSYSTEMD)
 endif ()
 
+set_target_properties(CemuCapture PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR})
+
 if (CEMU_CAPTURE_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif ()
@@ -84,4 +89,22 @@ install(TARGETS CemuCapture
 install(EXPORT CemuCapture-targets
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CemuCapture
         NAMESPACE CemuCapture::
+)
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/CemuCaptureConfigVersion.cmake
+    COMPATIBILITY ExactVersion
+)
+configure_package_config_file(
+    cmake/CemuCaptureConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/CemuCaptureConfig.cmake
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CemuCapture
+)
+install(FILES
+    ${cemu_capture_module_path}/Findlibsystemd.cmake
+    ${cemu_capture_module_path}/Findlibyuv.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/CemuCaptureConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/CemuCaptureConfigVersion.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CemuCapture
 )

@@ -1,0 +1,17 @@
+@PACKAGE_INIT@
+include(CMakeFindDependencyMacro)
+
+block(SCOPE_FOR VARIABLES)
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
+    find_dependency(libyuv MODULE)
+
+    if (@WIN32@) # WIN32
+        find_dependency(WIL MODULE)
+    endif ()
+
+    if (@CEMU_CAPTURE_USE_LIBSYSTEMD@) # CEMU_CAPTURE_USE_LIBSYSTEMD
+        find_dependency(libsystemd MODULE)
+    endif()
+endblock()
+
+include(${CMAKE_CURRENT_LIST_DIR}/CemuCapture-targets.cmake)

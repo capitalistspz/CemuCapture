@@ -34,6 +34,7 @@ More comprehensive examples found [here](./examples).
 ### CMake options
 - `CEMU_CAPTURE_USE_LIBSYSTEMD` (Linux only)
 - `CEMU_CAPTURE_BUILD_EXAMPLES`
+- `CEMU_CAPTURE_INSTALL`
 
 ### Dependencies: 
 - [libyuv](https://chromium.googlesource.com/libyuv/libyuv/)

@@ -3,7 +3,7 @@ A cross-platform camera capture library supporting Linux (via V4L2) and Windows 
 
 ## Usage
 
-In `CMakeLists.txt`
+`CMakeLists.txt`
 ```cmake
 include(FetchContent)
 
@@ -16,6 +16,20 @@ add_executable(my_executable main.cpp)
 
 target_link_libraries(my_executable PRIVATE CemuCapture::CemuCapture)
 ```
+`main.cpp`
+```c++
+#include <CemuCapture.hpp>
+#include <iostream>
+int main()
+{
+    auto context = CemuCapture::Context::Create();
+    for (const auto& source : context->EnumerateSources())
+    {
+        std::cout << source.id << ": " << source.name << '\n';
+    }
+}
+```
+More comprehensive examples found [here](./examples).
 
 ### CMake options
 - `CEMU_CAPTURE_USE_LIBSYSTEMD` (Linux only)

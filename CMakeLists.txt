@@ -96,7 +96,7 @@ if (CEMU_CAPTURE_INSTALL)
     include(CMakePackageConfigHelpers)
     write_basic_package_version_file(
         ${CMAKE_CURRENT_BINARY_DIR}/CemuCaptureConfigVersion.cmake
-        COMPATIBILITY ExactVersion
+        COMPATIBILITY SameMinorVersion
     )
     configure_package_config_file(
         cmake/CemuCaptureConfig.cmake.in

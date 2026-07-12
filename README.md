@@ -32,13 +32,14 @@ int main()
 More comprehensive examples found [here](./examples).
 
 ### CMake options
-- `CEMU_CAPTURE_USE_LIBSYSTEMD` (Linux only)
+- `CEMU_CAPTURE_DEV_ENUMERATION_LIB` (Linux only)
 - `CEMU_CAPTURE_BUILD_EXAMPLES`
 - `CEMU_CAPTURE_INSTALL`
 
 ### Dependencies: 
 - [libyuv](https://chromium.googlesource.com/libyuv/libyuv/)
 - [libsystemd](https://www.freedesktop.org/software/systemd/man/latest/libsystemd.html) (Linux only, optional)
+- [libudev](https://www.freedesktop.org/software/systemd/man/latest/libsystemd.html) (Linux only, optional)
 - [WIL](https://github.com/microsoft/wil) (Windows only)
 
 ### Notes

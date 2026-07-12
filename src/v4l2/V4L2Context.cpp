@@ -8,6 +8,7 @@
 #include <utility>
 #include <vector>
 
+#include <sys/epoll.h>
 #include <linux/videodev2.h>
 
 #include "V4L2Source.hpp"
@@ -17,8 +18,12 @@
 
 #include "../util.hpp"
 
-#ifdef CEMU_CAPTURE_USE_LIBSYSTEMD
+#if defined(CEMU_CAPTURE_ENUMERATE_WITH_LIBSYSTEMD)
 #include <systemd/sd-device.h>
+#elif defined(CEMU_CAPTURE_ENUMERATE_WITH_LIBUDEV)
+#include <libudev.h>
+#else
+#include <dirent.h>
 #endif
 
 namespace CemuCapture
@@ -41,7 +46,11 @@ namespace CemuCapture
         return std::make_shared<V4L2Context>();
     }
 
-    V4L2Context::V4L2Context() : m_epollFd(epoll_create1(0))
+    V4L2Context::V4L2Context()
+        : m_epollFd(epoll_create1(0))
+#ifdef CEMU_CAPTURE_ENUMERATE_WITH_LIBUDEV
+        , m_udev(udev_new(), udev_unref)
+#endif
     {
         if (m_epollFd.Invalid())
         {
@@ -80,7 +89,7 @@ namespace CemuCapture
         }
         return std::nullopt;
     }
-#ifdef CEMU_CAPTURE_USE_LIBSYSTEMD
+#if defined(CEMU_CAPTURE_ENUMERATE_WITH_LIBSYSTEMD)
     std::vector<SourceInfo> V4L2Context::EnumerateSources()
     {
         std::vector<SourceInfo> deviceInfos;
@@ -115,16 +124,63 @@ namespace CemuCapture
 
         return deviceInfos;
     }
+#elif defined(CEMU_CAPTURE_ENUMERATE_WITH_LIBUDEV)
+    std::vector<SourceInfo> V4L2Context::EnumerateSources()
+    {
+        std::vector<SourceInfo> deviceInfos;
+
+        auto enumerator = unique_ptr_cd<udev_enumerate, udev_enumerate_unref>(udev_enumerate_new(m_udev.get()));
+        if (!enumerator)
+        {
+            Log(LogLevel::Error, "Failed to create device enumerator");
+            return deviceInfos;
+        }
+        auto res = udev_enumerate_add_match_subsystem(enumerator.get(), "video4linux");
+        if (res < 0)
+        {
+            Log(LogLevel::Error, "Failed to set match subsystem during enumeration: {}", res);
+            return deviceInfos;
+        }
+        res = udev_enumerate_scan_devices(enumerator.get());
+
+        if (res < 0)
+        {
+            Log(LogLevel::Error, "Failed to scan for devices: {}", res);
+            return deviceInfos;
+        }
+
+        for (auto it = udev_enumerate_get_list_entry(enumerator.get()); it != nullptr;
+             it = udev_list_entry_get_next(it))
+        {
+            const char* syspath = udev_list_entry_get_name(it);
+            if (!syspath)
+                continue;
+            auto udevDev = unique_ptr_cd<udev_device, udev_device_unref>(udev_device_new_from_syspath(m_udev.get(), syspath));
+            if (!udevDev)
+                continue;
+            auto devNodePath = udev_device_get_devnode(udevDev.get());
+            if (!devNodePath)
+                continue;
+            auto fd = FileDescriptor(::open(devNodePath, O_RDONLY));
+            if (fd.Invalid())
+                continue;
+            auto devInfo = GetDeviceInfo(fd, devNodePath);
+            if (devInfo)
+                deviceInfos.emplace_back(std::move(*devInfo));
+        }
+
+        return deviceInfos;
+    }
 #else
-    std::vector<DeviceInfo> V4L2Context::EnumerateSources()
+    std::vector<SourceInfo> V4L2Context::EnumerateSources()
     {
         constexpr static auto MAX_DEVICE_PATH_LENGTH = 256;
         constexpr static auto MAX_DEVICE_NO = 128;
-        std::vector<DeviceInfo> deviceInfos;
+        std::vector<SourceInfo> deviceInfos;
         auto dir = unique_ptr_cd<DIR, ::closedir>(::opendir("/dev"));
         if (!dir)
         {
-            LogError("Failed to open /dev directory: {}", std::strerror(errno));
+            Log(LogLevel::Error, "Failed to open /dev directory: {}", std::strerror(errno));
             return deviceInfos;
         }
 
@@ -138,8 +194,8 @@ namespace CemuCapture
             {
                 std::array<char, MAX_DEVICE_PATH_LENGTH> name{};
                 std::snprintf(name.data(), name.size(), "/dev/%s", entry->d_name);
-                auto fd = file_descriptor(::open(name, O_RDONLY));
-                auto devInfo = GetDeviceInfo(fd, name);
+                auto fd = FileDescriptor(::open(name.data(), O_RDONLY));
+                auto devInfo = GetDeviceInfo(fd, name.data());
                 if (devInfo)
                     deviceInfos.emplace_back(std::move(*devInfo));
             }

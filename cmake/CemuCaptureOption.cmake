@@ -1,0 +1,15 @@
+function(cemu_capture_dependent_enum_option optvar)
+    cmake_parse_arguments(PARSE_ARGV 1 arg
+            "" "DESCRIPTION;DEFAULT;CONDITION;ELSE" "OPTIONS")
+    if (${arg_CONDITION})
+        set(${optvar} ${arg_DEFAULT} CACHE STRING ${arg_DESCRIPTION})
+    else ()
+        set(${optvar} ${arg_ELSE} CACHE STRING ${arg_DESCRIPTION} FORCE)
+    endif ()
+
+    set_property(CACHE ${optvar} PROPERTY STRINGS ${arg_OPTIONS})
+    list(FIND arg_OPTIONS ${${optvar}} opt_index)
+    if (opt_index EQUAL "-1")
+        message(FATAL_ERROR "${optvar} was set to '${${optvar}}' which is not one of [${arg_OPTIONS}]")
+    endif ()
+endfunction()

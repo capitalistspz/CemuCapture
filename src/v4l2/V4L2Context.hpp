@@ -9,6 +9,12 @@
 
 struct epoll_event;
 
+#ifdef CEMU_CAPTURE_ENUMERATE_WITH_LIBUDEV
+struct udev;
+extern "C" udev* udev_unref(udev*);
+using udev_ptr = std::unique_ptr<udev, decltype(&udev_unref)>;
+#endif
+
 namespace CemuCapture
 {
     class V4L2Source;
@@ -31,6 +37,9 @@ namespace CemuCapture
         std::vector<epoll_event> m_newEvents;
         std::jthread m_thread;
         FileDescriptor m_epollFd;
+#ifdef CEMU_CAPTURE_ENUMERATE_WITH_LIBUDEV
+        udev_ptr m_udev;
+#endif
     };
 }
 

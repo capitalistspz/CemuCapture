@@ -10,8 +10,12 @@ block(SCOPE_FOR VARIABLES)
         find_dependency(WIL MODULE)
     endif ()
 
-    if (@CEMU_CAPTURE_USE_LIBSYSTEMD@) # CEMU_CAPTURE_USE_LIBSYSTEMD
+    if (@cemu_capture_use_libsystemd@) # cemu_capture_use_systemd
         find_dependency(libsystemd MODULE)
+    endif()
+
+    if (@cemu_capture_use_libudev@) # cemu_capture_use_udev
+        find_dependency(libudev MODULE)
     endif()
 endblock()
 

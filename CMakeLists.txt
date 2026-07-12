@@ -3,15 +3,26 @@ project(CemuCapture LANGUAGES CXX VERSION 0.1.0)
 
 set(cemu_capture_module_path "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 list(APPEND CMAKE_MODULE_PATH "${cemu_capture_module_path}")
-include(CMakeDependentOption)
 
-cmake_dependent_option(CEMU_CAPTURE_USE_LIBSYSTEMD "Use systemd for device enumeration" ON "LINUX" OFF)
+include(CemuCaptureOption)
+
+cemu_capture_dependent_enum_option(CEMU_CAPTURE_DEV_ENUMERATION_LIB
+    OPTIONS "SYSTEMD" "UDEV" "NONE"
+    DESCRIPTION "Device enumeration backend"
+    DEFAULT "SYSTEMD"
+    CONDITION "LINUX"
+    ELSE "NONE"
+)
 
 option(CEMU_CAPTURE_BUILD_EXAMPLES "Build examples" ${PROJECT_IS_TOP_LEVEL})
 option(CEMU_CAPTURE_INSTALL "Enable installation rules" ${PROJECT_IS_TOP_LEVEL})
 
-if (CEMU_CAPTURE_USE_LIBSYSTEMD)
+if (CEMU_CAPTURE_DEV_ENUMERATION_LIB STREQUAL "SYSTEMD")
     find_package(libsystemd REQUIRED)
+    set(cemu_capture_use_libsystemd ON)
+elseif (CEMU_CAPTURE_DEV_ENUMERATION_LIB STREQUAL "UDEV")
+    find_package(libudev REQUIRED)
+    set(cemu_capture_use_libudev ON)
 endif ()
 
 if (WIN32)
@@ -70,9 +81,12 @@ endif ()
 
 target_link_libraries(CemuCapture PRIVATE libyuv::libyuv)
 
-if (CEMU_CAPTURE_USE_LIBSYSTEMD)
+if (CEMU_CAPTURE_DEV_ENUMERATION_LIB STREQUAL "SYSTEMD")
     target_link_libraries(CemuCapture PRIVATE libsystemd::libsystemd)
-    target_compile_definitions(CemuCapture PRIVATE CEMU_CAPTURE_USE_LIBSYSTEMD)
+    target_compile_definitions(CemuCapture PRIVATE CEMU_CAPTURE_ENUMERATE_WITH_LIBSYSTEMD)
+elseif (CEMU_CAPTURE_DEV_ENUMERATION_LIB STREQUAL "UDEV")
+    target_link_libraries(CemuCapture PRIVATE libudev::libudev)
+    target_compile_definitions(CemuCapture PRIVATE CEMU_CAPTURE_ENUMERATE_WITH_LIBUDEV)
 endif ()
 
 
@@ -105,6 +119,7 @@ if (CEMU_CAPTURE_INSTALL)
     )
     install(FILES
         ${cemu_capture_module_path}/Findlibsystemd.cmake
+        ${cemu_capture_module_path}/Findlibudev.cmake
         ${cemu_capture_module_path}/Findlibyuv.cmake
         ${CMAKE_CURRENT_BINARY_DIR}/CemuCaptureConfig.cmake
         ${CMAKE_CURRENT_BINARY_DIR}/CemuCaptureConfigVersion.cmake

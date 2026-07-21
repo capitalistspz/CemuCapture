@@ -1,3 +1,4 @@
+# This repository is archived in favour of using SDL3's SDL_Camera API
 # CemuCapture
 A cross-platform camera capture library supporting Linux (via V4L2) and Windows (via MediaFoundation).
 
